@@ -66,7 +66,7 @@ namespace ConferenceTracker
             }
             else
             {
-                app.UseExceptionHandler("/home/error");
+                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
