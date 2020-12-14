@@ -14,6 +14,8 @@ namespace ConferenceTracker
 {
     public class Startup
     {
+        private readonly string _allowedOrigins = "_allowedOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -26,6 +28,14 @@ namespace ConferenceTracker
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(_allowedOrigins, builder =>
+                {
+                    builder.WithOrigins("http://pluralsight.com");
+                });
+            });
+
             services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("ConferenceTracker"));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -54,6 +64,7 @@ namespace ConferenceTracker
             using (var context = scope.ServiceProvider.GetService<ApplicationDbContext>())
                 context.Database.EnsureCreated();
 
+            app.UseCors(_allowedOrigins);
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
